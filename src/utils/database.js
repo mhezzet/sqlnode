@@ -1,21 +1,30 @@
 import Sequelize from 'sequelize';
 
-export default function () {
-  const sequelize = new Sequelize('postgres://postgres:123@db:5432/monsters', {
-    pool: {
-      max: 5,
-      min: 0,
-      acquire: 30000,
-      idle: 10000,
-    },
-  });
+const db = new Sequelize('postgres://postgres:123@db:5432/monsters', {
+  pool: {
+    max: 5,
+    min: 0,
+    acquire: 30000,
+    idle: 10000,
+  },
+});
 
-  sequelize
+
+export function dbInit () {
+  db
     .authenticate()
     .then(() => {
       console.log('Connection has been established successfully.');
+      db.sync({
+        logging: console.log,
+        // force:true
+      })
     })
     .catch((err) => {
       console.error('Unable to connect to the database:', err);
     });
+  
+  
 }
+
+export default db
